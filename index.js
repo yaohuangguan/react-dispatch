@@ -14,4 +14,4 @@ const EventEmitter = {
 };
 
 
-export default EventEmitter;
+module.exports.EventEmitter = EventEmitter;
