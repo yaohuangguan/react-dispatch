@@ -1,4 +1,4 @@
-# What is this package?
+# Event Emitter Util Library
 
 This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application.
 
@@ -15,17 +15,22 @@ Then...
 ```
 import React,{ Fragment,useEffect } from 'react'
 import { EventEmitter } from 'event-emitter'
-const UPDATE = 'update'
+
+const UPDATE = 'update' // good to import constant file outside
+
 const App  = () => {
+
     const onClick = () => EventEmitter.dispatch(UPDATE, 'hi,i am here!')
+
     return(
-       <button onClick={onClick}> dispatch </button>
+       <button onClick={onClick}>dispatch Me.</button>
     )
   
 }
 
-const Child = () => {
+const AppBrotherComponent = () => {
     const [data, setData] = useState('')
+
     useEffect(() => {
         EventEmitter.subscribe(UPDATE, res => setData(res));
         // whenever it receives a dispatch, it will fire the callback. 
@@ -33,12 +38,14 @@ const Child = () => {
             EventEmitter.off(UPDATE)
         }
     },[])
+
     return (
-        <>
-        {data}
-        </>
+        <p>
+        Data received from dispatch: {data}
+        </p>
     )
 }
+export default App
 
 ```
 
