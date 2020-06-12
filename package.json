@@ -1,0 +1,23 @@
+{
+  "name": "event-emitter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yaohuangguan/event-emitter.git"
+  },
+  "keywords": [
+    "event-emitter",
+    "react-emitter"
+  ],
+  "author": "sam yao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yaohuangguan/event-emitter/issues"
+  },
+  "homepage": "https://github.com/yaohuangguan/event-emitter#readme"
+}
