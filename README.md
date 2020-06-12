@@ -4,17 +4,17 @@ This is a Event Emitter Class like util function. Just like Node.js EventEmitter
 
 # Installation
 
-`npm install event-emitter`
+`npm install react-event-emitter`
 
 or
 
-`yarn add event-emitter`
+`yarn add react-event-emitter`
 
 Then...
 
 ```
 import React,{ useState, useEffect } from 'react'
-import { EventEmitter } from 'event-emitter'
+import { EventEmitter } from 'react-event-emitter'
 
 const UPDATE = 'update' // good to import constant file outside
 
