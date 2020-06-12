@@ -12,7 +12,12 @@ or
 
 `yarn add react-dispatch`
 
-Then...
+Then 3 main functions...
+`dispatch(string, data:any)` dispatch a action, it will send whatever data you define to subscribe function.
+`subscribe(string, () =>{})` subscribe a action, when action got fired, this function will run
+`off(string)` used to clear the memory when done
+
+# Example 
 
 ```
 import React,{ useState, useEffect } from 'react'
