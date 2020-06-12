@@ -1,5 +1,7 @@
 # React Dispatcher Util Library
 
+A light weight🎆, extremely fast and efficient event emitter class for sending data up and down through components🔥
+
 This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application. But we use dispatch and subscribe, like subscribe pattern, instead of on, emit in Node.js world.
 
 # Installation
