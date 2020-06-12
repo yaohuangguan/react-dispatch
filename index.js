@@ -1,4 +1,4 @@
-const EventEmitter = {
+const dispatcher = {
     events: {},
     dispatch(event, data) {
         if (!this.events[event]) return;
@@ -14,4 +14,4 @@ const EventEmitter = {
 };
 
 
-module.exports.EventEmitter = EventEmitter;
+module.exports.dispatcher = dispatcher;
