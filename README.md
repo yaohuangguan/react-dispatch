@@ -13,7 +13,7 @@ or
 Then...
 
 ```
-import React,{ Fragment,useEffect } from 'react'
+import React,{ useState, useEffect } from 'react'
 import { EventEmitter } from 'event-emitter'
 
 const UPDATE = 'update' // good to import constant file outside
