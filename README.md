@@ -4,6 +4,8 @@ A light weight🎆, extremely fast and efficient event emitter class for sending
 
 This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application. But we use dispatch and subscribe, like subscribe pattern, instead of on, emit in Node.js world.
 
+# Background
+
 In React or Vue, we all know how to pass props to manage data flow inside our application. But sometimes, we have brother components that they are not inside one another. This situation we usually would use some data management library like Redux or Context Api. 
 But that would take longer time and more codes to set up. React dispatcher is made for this. It lets developer easily communicate through components, making to all connected!
 

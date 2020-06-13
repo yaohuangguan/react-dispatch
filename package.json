@@ -1,6 +1,6 @@
 {
   "name": "react-dispatch",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application.",
   "main": "index.js",
   "scripts": {
