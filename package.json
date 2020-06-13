@@ -1,6 +1,6 @@
 {
   "name": "react-dispatch",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application.",
   "main": "index.js",
   "scripts": {
@@ -8,17 +8,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yaohuangguan/event-emitter.git"
+    "url": "git+https://github.com/yaohuangguan/react-dispatch.git"
   },
   "keywords": [
     "event-emitter",
     "react-emitter",
-    "dispatch"
+    "dispatch",
+    "react-dispatch",
+    "subscribe pattern"
   ],
   "author": "sam yao",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/yaohuangguan/event-emitter/issues"
+    "url": "https://github.com/yaohuangguan/react-dispatch/issues"
   },
-  "homepage": "https://github.com/yaohuangguan/event-emitter#readme"
+  "homepage": "https://github.com/yaohuangguan/react-dispatch#readme"
 }
