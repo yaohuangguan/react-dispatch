@@ -7,7 +7,7 @@ This is a Event Emitter Class like util function. Just like Node.js EventEmitter
 # Background
 
 In React or Vue, we all know how to pass props to manage data flow inside our application. But sometimes, we have brother components that they are not inside one another. This situation we usually would use some data management library like Redux or Context Api. 
-But that would take longer time and more codes to set up. React dispatcher is made for this. It lets developer easily communicate through components, making to all connected!
+But that would take longer time and more codes to set up. React dispatcher is made for this. Its pretty handy if you deal with shared data in different files. It lets developer easily communicate through components, making to all connected!
 
 # Installation
 
@@ -19,11 +19,11 @@ or
 
 Then 4 main functions...
 
-`dispatch(string, data:any)` dispatch a action, it will send whatever data you define to subscribe function.
+`dispatch(string, data:any)` dispatch an action, it will send whatever data you defined to subscribe function.
 
-`subscribe(string, () =>{})` subscribe a action, when action got fired, this function will run
+`subscribe(string, () =>{})` subscribe an action, when an action got dispatched, this function will run
 
-`once(string, () => {})` subscribe only once, similar to EventEmitter.once function in Node.js. The listener will be destroyed after first action get called.
+`once(string, () => {})` subscribe only once, similar to EventEmitter.once function in Node.js. The listener will be destroyed after first action get dispatched.
 
 `off(string)` used to clear the memory when done
 
@@ -82,4 +82,4 @@ This is usually used when component unmounted, and recycle the memory in case of
 
 # Better improvement?
 
-Suggestions or issues, please contact me at yaob@miamioh.edu
+Suggestions or issues, please open an issue on github
