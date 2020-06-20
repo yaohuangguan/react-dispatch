@@ -1,6 +1,6 @@
 # React Dispatcher Util Library
 
-A light weight🎆, extremely fast and efficient event emitter class for sending data up and down through components🔥
+A light weight🎆, extremely fast and efficient event emitter class written in TypeScript, for sending data up and down through components🔥
 
 This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application. But we use dispatch and subscribe, like subscribe pattern, instead of on, emit in Node.js world.
 
@@ -21,7 +21,7 @@ Then 4 main functions...
 
 `dispatch(string, data:any)` dispatch an action, it will send whatever data you defined to subscribe function.
 
-`subscribe(string, () =>{})` subscribe an action, when an action got dispatched, this function will run
+`subscribe(string, () =>{})` subscribe to an action, when an action got dispatched, this function will run
 
 `once(string, () => {})` subscribe only once, similar to EventEmitter.once function in Node.js. The listener will be destroyed after first action get dispatched.
 
