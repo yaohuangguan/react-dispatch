@@ -4,6 +4,8 @@ A light weight🎆, extremely fast and efficient event emitter class written in 
 
 This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application. But we use dispatch and subscribe, like subscribe pattern, instead of on, emit in Node.js world.
 
+Checkout this demo : [Demo](https://codesandbox.io/s/optimistic-lake-0e2lf)
+
 # Background
 
 In React or Vue, we all know how to pass props to manage data flow inside our application. But sometimes, we have brother components that they are not inside one another. This situation we usually would use some data management library like Redux or Context Api. 
@@ -21,11 +23,11 @@ Then 4 main functions...
 
 `dispatch(string, data:any)` dispatch an action, it will send whatever data you defined to subscribe function.
 
-`subscribe(string, () =>{})` subscribe to an action, when an action got dispatched, this function will run
+`subscribe(string, () => {})` subscribe to an action, when an action got dispatched, this function will run
 
 `once(string, () => {})` subscribe only once, similar to EventEmitter.once function in Node.js. The listener will be destroyed after first action get dispatched.
 
-`off(string)` used to clear the memory when done
+`off(string | string[])` used to clear the memory when done
 
 # Example 
 
@@ -77,8 +79,8 @@ The first parameter of subscribe function takes EXACT same text you write in dis
 `dispatcher.once(string:string, callback)`
 This is similar to subscribe function, whats different is it only gets called once. It will not work if you want to fire it multiple times.
 
-`dispatcher.off(string:string)`
-This is usually used when component unmounted, and recycle the memory in case of memory leak in your application. Exp. Use in ComponentWillUnmount, etc..
+`dispatcher.off(string | string[])`
+This is usually used when component unmounted, and recycle the memory in case of memory leak in your application. Exp. Use in ComponentWillUnmount, etc.. It takes action you dispatched, it could be one action or array of actions.
 
 # Better improvement?
 
