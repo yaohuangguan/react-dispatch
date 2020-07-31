@@ -23,7 +23,7 @@ Then 4 main functions...
 
 `dispatch(string, data:any)` dispatch an action, it will send whatever data you defined to subscribe function.
 
-`subscribe(string, () => {})` subscribe to an action, when an action got dispatched, this function will run
+`on(string, () => {})` subscribe to an action, when an action got dispatched, this function will run
 
 `once(string, () => {})` subscribe only once, similar to EventEmitter.once function in Node.js. The listener will be destroyed after first action get dispatched.
 
@@ -32,26 +32,31 @@ Then 4 main functions...
 # Example 
 
 ```
-import React,{ useState, useEffect } from 'react'
+import React,{ useState } from 'react'
 import { dispatcher } from 'react-dispatch'
 
 const UPDATE = 'update' // good to import constant file outside
 
 const App  = () => {
 
-    const onClick = () => dispatcher.dispatch(UPDATE, 'hi,i am here!')
+    const onClick = () => dispatcher.dispatch(UPDATE, 1)
 
     return(
        <button onClick={onClick}>dispatch Me.</button>
     )
   
 }
+```
+```
+import React,{ useState, useEffect } from 'react'
+import { dispatcher } from 'react-dispatch'
 
+const UPDATE = 'update' // good to import constant file outside
 const AppBrotherComponent = () => {
-    const [data, setData] = useState('')
+    const [count, setCount] = useState(0)
 
     useEffect(() => {
-        dispatcher.subscribe(UPDATE, res => setData(res));
+        dispatcher.on(UPDATE, res => setCount(count + res));
         // whenever it receives a dispatch, it will fire the callback. 
         return () => {
             dispatcher.off(UPDATE)
@@ -64,22 +69,21 @@ const AppBrotherComponent = () => {
         </p>
     )
 }
-export default App
 
 ```
 
 # Provided API
 
-`dispatcher.dispatch(string:string, data:any)`
+`dispatcher.dispatch`
 dispatch function takes string as its first argument, the data you want the subscribe function to receive is the second argument.
 
-`dispatcher.subscribe(string:string, callback)`
-The first parameter of subscribe function takes EXACT same text you write in dispatch function to be able to match. The second parameter is the callback function that you do with the data from the dispatch.
+`dispatcher.on`
+The first parameter takes EXACT same text you write in dispatch function to be able to match. The second parameter is the callback function that you do with the data from the dispatch.
 
-`dispatcher.once(string:string, callback)`
-This is similar to subscribe function, whats different is it only gets called once. It will not work if you want to fire it multiple times.
+`dispatcher.once`
+This is similar to on function, whats different is it only gets called once. It will not work if you want to fire it multiple times.
 
-`dispatcher.off(string | string[])`
+`dispatcher.off`
 This is usually used when component unmounted, and recycle the memory in case of memory leak in your application. Exp. Use in ComponentWillUnmount, etc.. It takes action you dispatched, it could be one action or array of actions.
 
 # Better improvement?

@@ -29,7 +29,7 @@ var dispatcher = (function () {
             return;
         events.get(event).forEach(function (callback) { return callback(data); });
     };
-    var subscribe = function (event, callback) {
+    var on = function (event, callback) {
         beforeSubscribe(event, callback, true);
     };
     var once = function (event, callback) {
@@ -51,7 +51,7 @@ var dispatcher = (function () {
     };
     return {
         dispatch: dispatch,
-        subscribe: subscribe,
+        on: on,
         once: once,
         off: off,
     };

@@ -4,7 +4,7 @@ const dispatcher = (() => {
   let isOnce = false;
   const checkValidate = (checkTarget: () => {} | [], target: string) =>
     Object.prototype.toString.call(checkTarget) === target;
-
+  
   const beforeSubscribe = (processor: string, updater: () => {}, isSubscribe: boolean) => {
     if (isSubscribe) {
       if (!events.has(processor)) events.set(processor, []);
@@ -24,7 +24,7 @@ const dispatcher = (() => {
     events.get(event).forEach((callback: (arg0: any) => any) => callback(data));
   };
 
-  const subscribe = (event: string, callback: any) => {
+  const on = (event: string, callback: any) => {
     beforeSubscribe(event, callback, true);
   };
   const once = (event: string, callback: any) => {
@@ -33,7 +33,7 @@ const dispatcher = (() => {
   };
   const off = (event: any) => {
     if (checkValidate(event, "[object Array]")) {
-      return event.forEach((e: any) => {
+      return event.forEach((e: string) => {
         if (events.has(e)) {
           events.delete(e);
         } else {
@@ -45,7 +45,7 @@ const dispatcher = (() => {
   };
   return {
     dispatch,
-    subscribe,
+    on,
     once,
     off,
   };
