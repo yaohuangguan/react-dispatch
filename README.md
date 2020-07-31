@@ -4,7 +4,7 @@ A light weight🎆, extremely fast and efficient event emitter class written in 
 
 This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application. But we use dispatch and subscribe, like subscribe pattern, instead of on, emit in Node.js world.
 
-Checkout this demo : [Demo](https://codesandbox.io/s/optimistic-lake-0e2lf)
+Checkout this demo : [Demo](https://codesandbox.io/s/frosty-cookies-c7n04)
 
 # Background
 
