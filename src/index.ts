@@ -5,8 +5,8 @@ const dispatcher = (() => {
   const checkValidate = (checkTarget: () => {} | [], target: string) =>
     Object.prototype.toString.call(checkTarget) === target;
   
-  const beforeSubscribe = (processor: string, updater: () => {}, isSubscribe: boolean) => {
-    if (isSubscribe) {
+  const beforeSubscribe = (processor: string, updater: () => {}, isOnceEvt: boolean) => {
+    if (!isOnceEvt) {
       if (!events.has(processor)) events.set(processor, []);
       if (!checkValidate(updater, "[object Function]")) return;
       return events.get(processor).push(updater);
@@ -25,10 +25,10 @@ const dispatcher = (() => {
   };
 
   const on = (event: string, callback: any) => {
-    beforeSubscribe(event, callback, true);
+    beforeSubscribe(event, callback, false);
   };
   const once = (event: string, callback: any) => {
-    beforeSubscribe(event, callback, false);
+    beforeSubscribe(event, callback, true);
     isOnce = true;
   };
   const off = (event: any) => {
