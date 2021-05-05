@@ -6,8 +6,8 @@ var dispatcher = (function () {
     var checkValidate = function (checkTarget, target) {
         return Object.prototype.toString.call(checkTarget) === target;
     };
-    var beforeSubscribe = function (processor, updater, isSubscribe) {
-        if (isSubscribe) {
+    var beforeSubscribe = function (processor, updater, isOnceEvt) {
+        if (!isOnceEvt) {
             if (!events.has(processor))
                 events.set(processor, []);
             if (!checkValidate(updater, "[object Function]"))
@@ -30,10 +30,10 @@ var dispatcher = (function () {
         events.get(event).forEach(function (callback) { return callback(data); });
     };
     var on = function (event, callback) {
-        beforeSubscribe(event, callback, true);
+        beforeSubscribe(event, callback, false);
     };
     var once = function (event, callback) {
-        beforeSubscribe(event, callback, false);
+        beforeSubscribe(event, callback, true);
         isOnce = true;
     };
     var off = function (event) {
