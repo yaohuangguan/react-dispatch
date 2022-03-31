@@ -5,7 +5,7 @@ const dispatcher = (() => {
   const checkValidate = (checkTarget: () => {} | [], target: string) =>
     Object.prototype.toString.call(checkTarget) === target;
   
-  const beforeSubscribe = (processor: string, updater: () => {}, isOnceEvt: boolean) => {
+  const beforeSubscribe = (processor: string, updater: () => any, isOnceEvt: boolean) => {
     if (!isOnceEvt) {
       if (!events.has(processor)) events.set(processor, []);
       if (!checkValidate(updater, "[object Function]")) return;
@@ -24,15 +24,15 @@ const dispatcher = (() => {
     events.get(event).forEach((callback: (arg0: any) => any) => callback(data));
   };
 
-  const on = (event: string, callback: any) => {
+  const on = (event: string, callback: () => unknown) => {
     beforeSubscribe(event, callback, false);
   };
-  const once = (event: string, callback: any) => {
+  const once = (event: string, callback:  () => unknown) => {
     beforeSubscribe(event, callback, true);
     isOnce = true;
   };
-  const off = (event: any) => {
-    if (checkValidate(event, "[object Array]")) {
+  const off = (event: string | string[]) => {
+    if (Array.isArray(event)) {
       return event.forEach((e: string) => {
         if (events.has(e)) {
           events.delete(e);
@@ -51,4 +51,5 @@ const dispatcher = (() => {
   };
 })();
 
-module.exports.dispatcher = dispatcher;
+
+export { dispatcher }

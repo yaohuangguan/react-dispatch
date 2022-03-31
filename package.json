@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "rollup --config",
-    "release": "standard-version --message 'chore(release): %s\n\n[skip ci]' --no-verify"
+    "release": "standard-version --releaseCommitMessageFormat 'chore(release): %s\n\n[skip ci]' --no-verify"
   },
   "repository": {
     "type": "git",
