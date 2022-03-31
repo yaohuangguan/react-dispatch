@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "rollup --config",
-    "release": "standard-version --releaseCommitMessageFormat 'chore(release): %s\n\n[skip ci]' --no-verify"
+    "release": "standard-version --releaseCommitMessageFormat 'chore(release): %s\n\n[skip ci]' --no-verify",
+    "preview":"yarn build && cd example && yarn add react-dispatch@latest && yarn start"
   },
   "repository": {
     "type": "git",
