@@ -1,6 +1,6 @@
 {
   "name": "react-dispatch",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -55,6 +55,7 @@
     "rollup-plugin-dts": "^4.2.0",
     "rollup-plugin-esbuild": "^4.8.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "standard-version": "^9.5.0",
     "typescript": "4.5.5",
     "vitest": "^4.1.10"
   },
