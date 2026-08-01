@@ -1,91 +1,131 @@
-# React Dispatcher Util Library
+# react-dispatch
 
-A light weight🎆, extremely fast and efficient event emitter class written in TypeScript, for sending data up and down through components🔥
+A lightweight, extremely fast, and type-safe event dispatcher for React and JavaScript applications. It allows easy, decoupled communication between sibling or nested components without the overhead of Redux or React Context API.
 
-This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application. But we use dispatch and subscribe, like subscribe pattern, instead of on, emit in Node.js world.
+[![license](https://img.shields.io/npm/l/react-dispatch.svg)](https://github.com/yaohuangguan/react-dispatch/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/react-dispatch.svg)](https://www.npmjs.com/package/react-dispatch)
+[![bundle size](https://img.shields.io/bundlephobia/min/react-dispatch.svg)](https://bundlephobia.com/package/react-dispatch)
 
-Checkout this demo : [Demo](https://codesandbox.io/s/frosty-cookies-c7n04)
+## Features
 
-# Background
+- **Decoupled Sibling Communication**: Communicate between components at any depth in your tree.
+- **Ultra-lightweight**: Tiny bundle footprint with zero runtime dependencies.
+- **Type Safe**: First-class support for TypeScript generics so you get autocomplete and compile-time checks on your event payloads.
+- **Simple API**: Just 4 methods: `on`, `once`, `off`, `dispatch`.
 
-In React or Vue, we all know how to pass props to manage data flow inside our application. But sometimes, we have brother components that they are not inside one another. This situation we usually would use some data management library like Redux or Context Api. 
-But that would take longer time and more codes to set up. React dispatcher is made for this. Its pretty handy if you deal with shared data in different files. It lets developer easily communicate through components, making to all connected!
+## Installation
 
-# Installation
+Install using your preferred package manager:
 
-`npm install react-dispatch`
+```bash
+# npm
+npm install react-dispatch
 
-or
+# yarn
+yarn add react-dispatch
 
-`yarn add react-dispatch`
-
-Then 4 main functions...
-
-`dispatch(string, data:any)` dispatch an action, it will send whatever data you defined to subscribe function.
-
-`on(string, () => {})` subscribe to an action, when an action got dispatched, this function will run
-
-`once(string, () => {})` subscribe only once, similar to EventEmitter.once function in Node.js. The listener will be destroyed after first action get dispatched.
-
-`off(string | string[])` used to clear the memory when done
-
-# Example 
-
+# pnpm
+pnpm add react-dispatch
 ```
-import React,{ useState } from 'react'
-import { dispatcher } from 'react-dispatch'
 
-const UPDATE = 'update' // good to import constant file outside
+## Quick Start
 
-const App  = () => {
+### 1. Dispatching Events
+From any component, trigger an event and pass data:
 
-    const onClick = () => dispatcher.dispatch(UPDATE, 1)
+```tsx
+import React from 'react';
+import { dispatcher } from 'react-dispatch';
 
-    return(
-       <button onClick={onClick}>dispatch Me.</button>
-    )
-  
+export const ActionButton = () => {
+  const handleUpdate = () => {
+    // Send a numeric value to subscribers
+    dispatcher.dispatch('counter:update', 1);
+  };
+
+  return <button onClick={handleUpdate}>Add 1</button>;
+};
+```
+
+### 2. Subscribing to Events
+Listen to the event in another component and update state. Remember to clean up on unmount!
+
+```tsx
+import React, { useState, useEffect } from 'react';
+import { dispatcher } from 'react-dispatch';
+
+export const DisplayCounter = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Subscribe to event
+    dispatcher.on<number>('counter:update', (value) => {
+      setCount((prev) => prev + value);
+    });
+
+    // Unsubscribe when component unmounts to prevent memory leaks
+    return () => {
+      dispatcher.off('counter:update');
+    };
+  }, []);
+
+  return <div>Count: {count}</div>;
+};
+```
+
+---
+
+## TypeScript Support
+
+`react-dispatch` supports generic types to enforce payload types:
+
+```typescript
+import { dispatcher } from 'react-dispatch';
+
+interface UserPayload {
+  id: string;
+  name: string;
 }
-```
-```
-import React,{ useState, useEffect } from 'react'
-import { dispatcher } from 'react-dispatch'
 
-const UPDATE = 'update' // good to import constant file outside
-const AppBrotherComponent = () => {
-    const [count, setCount] = useState(0)
+// 1. Subscribe with type safety
+dispatcher.on<UserPayload>('user:login', (user) => {
+  console.log(user.name); // Typed as string
+});
 
-    useEffect(() => {
-        dispatcher.on(UPDATE, res => setCount(count + res));
-        // whenever it receives a dispatch, it will fire the callback. 
-        return () => {
-            dispatcher.off(UPDATE)
-        }
-    },[])
-
-    return (
-        <p>
-        Data received from dispatch: {data}
-        </p>
-    )
-}
-
+// 2. Dispatch with type safety
+dispatcher.dispatch<UserPayload>('user:login', {
+  id: 'usr_123',
+  name: 'Sam Yao'
+});
 ```
 
-# Provided API
+---
 
-`dispatcher.dispatch`
-dispatch function takes string as its first argument, the data you want the subscribe function to receive is the second argument.
+## API Reference
 
-`dispatcher.on`
-The first parameter takes EXACT same text you write in dispatch function to be able to match. The second parameter is the callback function that you do with the data from the dispatch.
+### `dispatcher.on<T = any>(event: string, callback: (data: T) => unknown): void`
+Subscribes to an event. The callback will trigger every time the event is dispatched.
 
-`dispatcher.once`
-This is similar to on function, whats different is it only gets called once. It will not work if you want to fire it multiple times.
+- **`event`**: Unique event key.
+- **`callback`**: Function to run when the event is triggered, receiving the dispatched payload.
 
-`dispatcher.off`
-This is usually used when component unmounted, and recycle the memory in case of memory leak in your application. Exp. Use in ComponentWillUnmount, etc.. It takes action you dispatched, it could be one action or array of actions.
+### `dispatcher.once<T = any>(event: string, callback: (data: T) => unknown): void`
+Subscribes to an event once. The callback will trigger the next time the event is dispatched and then automatically unsubscribe.
 
-# Better improvement?
+### `dispatcher.off(event: string | string[]): boolean | void`
+Unsubscribes the callbacks for the specified event(s). Always clean up your subscriptions on component unmount or destructor cycles.
 
-Suggestions or issues, please open an issue on github
+- Pass a `string` to unsubscribe a single event key.
+- Pass an `string[]` array to unsubscribe multiple event keys at once.
+
+### `dispatcher.dispatch<T = any>(event: string, data?: T): void`
+Fires an event and notifies all active subscribers with the provided data.
+
+- **`event`**: Unique event key matching the subscriber.
+- **`data`**: Optional payload sent to the event listeners.
+
+---
+
+## License
+
+[ISC](LICENSE)

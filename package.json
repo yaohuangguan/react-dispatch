@@ -8,10 +8,15 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup --config",
     "release": "standard-version --releaseCommitMessageFormat 'chore(release): %s\n\n[skip ci]' --no-verify",
-    "preview":"yarn build && cd example && yarn add react-dispatch@latest && yarn start"
+    "preview": "yarn build && cd example && yarn start",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -19,8 +24,14 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     }
   },
   "keywords": [
@@ -44,7 +55,8 @@
     "rollup-plugin-dts": "^4.2.0",
     "rollup-plugin-esbuild": "^4.8.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "typescript": "4.5.5"
+    "typescript": "4.5.5",
+    "vitest": "^4.1.10"
   },
   "dependencies": {}
 }
