@@ -1,131 +1,139 @@
 # react-dispatch
 
-A lightweight, extremely fast, and type-safe event dispatcher for React and JavaScript applications. It allows easy, decoupled communication between sibling or nested components without the overhead of Redux or React Context API.
+A tiny, dependency-free, type-safe event dispatcher for React and JavaScript applications.
 
-[![license](https://img.shields.io/npm/l/react-dispatch.svg)](https://github.com/yaohuangguan/react-dispatch/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/react-dispatch.svg)](https://www.npmjs.com/package/react-dispatch)
-[![bundle size](https://img.shields.io/bundlephobia/min/react-dispatch.svg)](https://bundlephobia.com/package/react-dispatch)
+[![license](https://img.shields.io/npm/l/react-dispatch.svg)](https://github.com/yaohuangguan/react-dispatch/blob/master/LICENSE)
 
-## Features
+## Highlights
 
-- **Decoupled Sibling Communication**: Communicate between components at any depth in your tree.
-- **Ultra-lightweight**: Tiny bundle footprint with zero runtime dependencies.
-- **Type Safe**: First-class support for TypeScript generics so you get autocomplete and compile-time checks on your event payloads.
-- **Simple API**: Just 4 methods: `on`, `once`, `off`, `dispatch`.
+- Zero runtime dependencies
+- ESM and CommonJS builds
+- Built and tested with the 2026 toolchain: TypeScript 7, Vitest 5, esbuild
+- Legacy generic API remains supported
+- Strongly typed event maps via `createDispatcher`
+- `on()` / `once()` return unsubscribe functions
+- Remove one callback or all listeners for an event
+- `listenerCount()` and `clear()` utilities
+- React is optional; the package works in vanilla JavaScript and Node.js too
 
-## Installation
-
-Install using your preferred package manager:
+## Install
 
 ```bash
-# npm
 npm install react-dispatch
-
-# yarn
-yarn add react-dispatch
-
-# pnpm
-pnpm add react-dispatch
 ```
 
-## Quick Start
+## Quick start
 
-### 1. Dispatching Events
-From any component, trigger an event and pass data:
-
-```tsx
-import React from 'react';
+```ts
 import { dispatcher } from 'react-dispatch';
 
-export const ActionButton = () => {
-  const handleUpdate = () => {
-    // Send a numeric value to subscribers
-    dispatcher.dispatch('counter:update', 1);
-  };
+const unsubscribe = dispatcher.on<number>('counter:update', (value) => {
+  console.log(value);
+});
 
-  return <button onClick={handleUpdate}>Add 1</button>;
+dispatcher.dispatch<number>('counter:update', 1);
+unsubscribe();
+```
+
+## Typed event maps
+
+```ts
+import { createDispatcher } from 'react-dispatch';
+
+type AppEvents = {
+  'user:login': { userId: string; name: string };
+  'cart:count': number;
 };
+
+const appEvents = createDispatcher<AppEvents>();
+
+appEvents.on('user:login', (user) => {
+  console.log(user.name);
+});
+
+appEvents.dispatch('user:login', {
+  userId: 'usr_123',
+  name: 'Sam',
+});
 ```
 
-### 2. Subscribing to Events
-Listen to the event in another component and update state. Remember to clean up on unmount!
+Invalid event names and payload shapes are rejected by TypeScript.
+
+## React example
 
 ```tsx
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { dispatcher } from 'react-dispatch';
 
-export const DisplayCounter = () => {
+export function Counter() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    // Subscribe to event
-    dispatcher.on<number>('counter:update', (value) => {
-      setCount((prev) => prev + value);
+    return dispatcher.on<number>('counter:update', (value) => {
+      setCount((current) => current + value);
     });
-
-    // Unsubscribe when component unmounts to prevent memory leaks
-    return () => {
-      dispatcher.off('counter:update');
-    };
   }, []);
 
-  return <div>Count: {count}</div>;
-};
-```
-
----
-
-## TypeScript Support
-
-`react-dispatch` supports generic types to enforce payload types:
-
-```typescript
-import { dispatcher } from 'react-dispatch';
-
-interface UserPayload {
-  id: string;
-  name: string;
+  return <div>{count}</div>;
 }
-
-// 1. Subscribe with type safety
-dispatcher.on<UserPayload>('user:login', (user) => {
-  console.log(user.name); // Typed as string
-});
-
-// 2. Dispatch with type safety
-dispatcher.dispatch<UserPayload>('user:login', {
-  id: 'usr_123',
-  name: 'Sam Yao'
-});
 ```
 
----
+## API
 
-## API Reference
+### `dispatcher.on<T>(event, callback)`
 
-### `dispatcher.on<T = any>(event: string, callback: (data: T) => unknown): void`
-Subscribes to an event. The callback will trigger every time the event is dispatched.
+Registers a persistent listener and returns an unsubscribe function.
 
-- **`event`**: Unique event key.
-- **`callback`**: Function to run when the event is triggered, receiving the dispatched payload.
+### `dispatcher.once<T>(event, callback)`
 
-### `dispatcher.once<T = any>(event: string, callback: (data: T) => unknown): void`
-Subscribes to an event once. The callback will trigger the next time the event is dispatched and then automatically unsubscribe.
+Registers a one-time listener and returns an unsubscribe function.
 
-### `dispatcher.off(event: string | string[]): boolean | void`
-Unsubscribes the callbacks for the specified event(s). Always clean up your subscriptions on component unmount or destructor cycles.
+### `dispatcher.off(event, callback?)`
 
-- Pass a `string` to unsubscribe a single event key.
-- Pass an `string[]` array to unsubscribe multiple event keys at once.
+Removes a specific callback when provided. Without a callback, removes all listeners for the event. Arrays of event names are supported.
 
-### `dispatcher.dispatch<T = any>(event: string, data?: T): void`
-Fires an event and notifies all active subscribers with the provided data.
+### `dispatcher.dispatch<T>(event, data?)`
 
-- **`event`**: Unique event key matching the subscriber.
-- **`data`**: Optional payload sent to the event listeners.
+Dispatches an event to all current listeners.
 
----
+### `dispatcher.listenerCount(event)`
+
+Returns the number of persistent and one-time listeners for an event.
+
+### `dispatcher.clear()`
+
+Removes every listener.
+
+### `createDispatcher<EventMap>()`
+
+Creates an isolated dispatcher with compile-time event-name and payload validation.
+
+## Package output
+
+- ESM: `dist/index.js`
+- CommonJS: `dist/index.cjs`
+- Types: `dist/index.d.ts`
+- Source maps included
+- `sideEffects: false` for tree-shaking
+
+## Compatibility
+
+- Node.js 18+
+- Modern browsers
+- React 18 / 19+ (React is not a dependency)
+- TypeScript consumers supported; built and validated with TypeScript 7
+
+## Development
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run build
+npm run pack:check
+```
 
 ## License
 
-[ISC](LICENSE)
+ISC

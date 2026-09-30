@@ -1,15 +1,19 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+## 2.0.0
 
-### [1.4.1](https://github.com/yaohuangguan/react-dispatch/compare/v1.4.0...v1.4.1) (2026-08-01)
+### Added
+- Strongly typed event maps through `createDispatcher<EventMap>()`.
+- Unsubscribe functions returned by `on()` and `once()`.
+- Selective callback removal with `off(event, callback)`.
+- `listenerCount()` and `clear()` utilities.
+- ESM and CommonJS exports, TypeScript declarations, and source maps.
 
-## [1.4.0](https://github.com/yaohuangguan/react-dispatch/compare/v1.3.1...v1.4.0) (2026-08-01)
+### Changed
+- Modernized the 2026 toolchain to TypeScript 7, Vitest 5, and esbuild.
+- Updated npm publishing metadata and package exports.
+- Reworked internals around `Map` and `Set` while preserving the classic singleton API.
 
-
-### Features
-
-* :bento:  add examples ([6c8298a](https://github.com/yaohuangguan/react-dispatch/commit/6c8298a94cd14dd2da82141b15e818de1d62e924))
-* add rollup ([135494e](https://github.com/yaohuangguan/react-dispatch/commit/135494ee01336399f7e4ad0cfdc0e32575b87996))
-
-### 1.3.1 (2022-03-31)
+### Compatibility
+- Existing `dispatcher.on<T>()`, `once<T>()`, `dispatch<T>()`, and `off()` usage remains supported.
+- React remains optional and there are no runtime dependencies.

@@ -1,108 +1,104 @@
-import { describe, it, expect, vi } from 'vitest';
-import { dispatcher } from '../src/main';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createDispatcher, dispatcher } from '../src/index';
 
 describe('react-dispatch', () => {
-  it('should subscribe to and receive event data', () => {
+  beforeEach(() => dispatcher.clear());
+
+  it('subscribes and dispatches payloads', () => {
     const callback = vi.fn();
     dispatcher.on('test-event', callback);
-
     dispatcher.dispatch('test-event', { msg: 'hello' });
-    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledOnce();
     expect(callback).toHaveBeenCalledWith({ msg: 'hello' });
-
-    // Clean up
-    dispatcher.off('test-event');
   });
 
-  it('should handle multiple subscribers for the same event', () => {
-    const callback1 = vi.fn();
-    const callback2 = vi.fn();
-
-    dispatcher.on('multi-event', callback1);
-    dispatcher.on('multi-event', callback2);
-
+  it('supports multiple subscribers', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    dispatcher.on('multi-event', first);
+    dispatcher.on('multi-event', second);
     dispatcher.dispatch('multi-event', 42);
-
-    expect(callback1).toHaveBeenCalledWith(42);
-    expect(callback2).toHaveBeenCalledWith(42);
-
-    dispatcher.off('multi-event');
+    expect(first).toHaveBeenCalledWith(42);
+    expect(second).toHaveBeenCalledWith(42);
   });
 
-  it('should subscribe once and only trigger once', () => {
+  it('fires once listeners only once', () => {
     const callback = vi.fn();
     dispatcher.once('once-event', callback);
-
     dispatcher.dispatch('once-event', 'first');
     dispatcher.dispatch('once-event', 'second');
-
-    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledOnce();
     expect(callback).toHaveBeenCalledWith('first');
   });
 
-  it('should unsubscribe using off for a single event string', () => {
+  it('returns an unsubscribe function from on', () => {
     const callback = vi.fn();
-    dispatcher.on('off-event', callback);
-    dispatcher.off('off-event');
-
-    dispatcher.dispatch('off-event', 'data');
+    const unsubscribe = dispatcher.on('event', callback);
+    unsubscribe();
+    dispatcher.dispatch('event', 'data');
     expect(callback).not.toHaveBeenCalled();
   });
 
-  it('should unsubscribe using off for an array of event strings', () => {
-    const callback1 = vi.fn();
-    const callback2 = vi.fn();
-
-    dispatcher.on('event1', callback1);
-    dispatcher.on('event2', callback2);
-
-    dispatcher.off(['event1', 'event2']);
-
-    dispatcher.dispatch('event1', 'data1');
-    dispatcher.dispatch('event2', 'data2');
-
-    expect(callback1).not.toHaveBeenCalled();
-    expect(callback2).not.toHaveBeenCalled();
+  it('removes only the requested callback', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    dispatcher.on('event', first);
+    dispatcher.on('event', second);
+    expect(dispatcher.off('event', first)).toBe(true);
+    dispatcher.dispatch('event', 'data');
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledOnce();
   });
 
-  it('should gracefully handle non-function callbacks when subscribing', () => {
-    expect(() => {
-      // @ts-expect-error - testing invalid callback type runtime safety
-      dispatcher.on('invalid-event', 'not-a-function');
-    }).not.toThrow();
-
-    expect(() => {
-      dispatcher.dispatch('invalid-event', 'data');
-    }).not.toThrow();
+  it('removes all listeners for one or many event names', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    dispatcher.on('event1', first);
+    dispatcher.once('event2', second);
+    expect(dispatcher.off(['event1', 'event2'])).toBe(true);
+    dispatcher.dispatch('event1', 'data');
+    dispatcher.dispatch('event2', 'data');
+    expect(first).not.toHaveBeenCalled();
+    expect(second).not.toHaveBeenCalled();
   });
 
-  it('should clear once event subscription if off is called', () => {
+  it('supports mixed on and once listeners', () => {
+    const persistent = vi.fn();
+    const once = vi.fn();
+    dispatcher.on('mixed', persistent);
+    dispatcher.once('mixed', once);
+    dispatcher.dispatch('mixed', 1);
+    dispatcher.dispatch('mixed', 2);
+    expect(persistent).toHaveBeenCalledTimes(2);
+    expect(once).toHaveBeenCalledOnce();
+  });
+
+  it('tracks listener counts and clear()', () => {
+    dispatcher.on('counted', vi.fn());
+    dispatcher.once('counted', vi.fn());
+    expect(dispatcher.listenerCount('counted')).toBe(2);
+    dispatcher.clear();
+    expect(dispatcher.listenerCount('counted')).toBe(0);
+  });
+
+  it('creates isolated typed dispatchers', () => {
+    type AppEvents = {
+      login: { userId: string };
+      logout: undefined;
+    };
+
+    const app = createDispatcher<AppEvents>();
     const callback = vi.fn();
-    dispatcher.once('once-off-event', callback);
-    dispatcher.off('once-off-event');
-
-    dispatcher.dispatch('once-off-event', 'data');
-    expect(callback).not.toHaveBeenCalled();
+    app.on('login', callback);
+    app.dispatch('login', { userId: 'sam' });
+    expect(callback).toHaveBeenCalledWith({ userId: 'sam' });
   });
 
-  it('should support mixed on and once subscribers for the same event name', () => {
-    const callbackOn = vi.fn();
-    const callbackOnce = vi.fn();
-
-    dispatcher.on('mixed-event', callbackOn);
-    dispatcher.once('mixed-event', callbackOnce);
-
-    dispatcher.dispatch('mixed-event', 'first');
-    expect(callbackOn).toHaveBeenCalledTimes(1);
-    expect(callbackOn).toHaveBeenCalledWith('first');
-    expect(callbackOnce).toHaveBeenCalledTimes(1);
-    expect(callbackOnce).toHaveBeenCalledWith('first');
-
-    dispatcher.dispatch('mixed-event', 'second');
-    expect(callbackOn).toHaveBeenCalledTimes(2);
-    expect(callbackOn).toHaveBeenLastCalledWith('second');
-    expect(callbackOnce).toHaveBeenCalledTimes(1); // remain 1
-
-    dispatcher.off('mixed-event');
+  it('gracefully ignores invalid callbacks at runtime', () => {
+    expect(() => {
+      // @ts-expect-error runtime hardening
+      dispatcher.on('invalid', 'not-a-function');
+      dispatcher.dispatch('invalid', 'data');
+    }).not.toThrow();
   });
 });

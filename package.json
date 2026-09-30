@@ -1,63 +1,64 @@
 {
   "name": "react-dispatch",
-  "version": "1.4.1",
-  "description": "This is a Event Emitter Class like util function. Just like Node.js EventEmitter, you can communicate through different components in your application.",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+  "version": "2.0.0",
+  "description": "Tiny, dependency-free, type-safe event dispatcher for React and JavaScript applications.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "rollup --config",
-    "release": "standard-version --releaseCommitMessageFormat 'chore(release): %s\n\n[skip ci]' --no-verify",
-    "preview": "yarn build && cd example && yarn start",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:js": "esbuild src/index.ts --bundle --platform=neutral --format=esm --target=es2020 --sourcemap --outfile=dist/index.js && esbuild src/index.ts --bundle --platform=neutral --format=cjs --target=es2020 --sourcemap --outfile=dist/index.cjs",
+    "build": "npm run clean && npm run build:types && npm run build:js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "pack:check": "npm pack --dry-run"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yaohuangguan/react-dispatch.git"
   },
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      }
-    }
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
   "keywords": [
     "event-emitter",
-    "react-emitter",
+    "event-bus",
+    "react",
+    "typescript",
     "dispatch",
-    "react-dispatch",
-    "subscribe pattern"
+    "pubsub",
+    "react-dispatch"
   ],
-  "author": "sam yao",
+  "author": "Sam Yao",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/yaohuangguan/react-dispatch/issues"
   },
   "homepage": "https://github.com/yaohuangguan/react-dispatch#readme",
   "devDependencies": {
-    "@types/node": "^14.0.13",
-    "esbuild": "^0.14.29",
-    "rollup": "^2.70.1",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-dts": "^4.2.0",
-    "rollup-plugin-esbuild": "^4.8.2",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "standard-version": "^9.5.0",
-    "typescript": "4.5.5",
-    "vitest": "^4.1.10"
-  },
-  "dependencies": {}
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
+  }
 }
